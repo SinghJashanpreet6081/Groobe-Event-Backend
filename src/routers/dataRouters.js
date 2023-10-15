@@ -186,46 +186,108 @@ router.get(
   upload.single("image"),
   async (req, res) => {
     try {
+      const typeOfUser = req.get("usertype");
+      //console.log(typeOfUser);
       const id = req.body.id || req.query.id;
-      if (!id) {
+      if (typeOfUser === "admin") {
         const getData = await SocietyDataModel.findOne()
           .select({ list: 1, _id: 0, __v: 1 })
           .sort({ list: 1 });
 
         //for sorting:
         var TempList = getData.list;
-        console.log("This is Society data--------");
-        console.log(TempList);
 
-        res.status(200).send({
-          status: "success",
-          data: TempList,
-        });
-      } else {
-        const getData = await SocietyDataModel.findById(id);
-        if (!getData) {
-          res.status(500).send({
-            status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+        if (!id) {
+          console.log("This is Admin Society data--------");
+
+          res.status(200).send({
+            status: "success",
+            data: TempList,
           });
-        } else
+        } else {
+          const SignleIdData = TempList.filter((arr) => {
+            return arr.id === id;
+          });
+
+          if (SignleIdData.length === 0) {
+            res.status(500).send({
+              status: false,
+              message: `Data is not Available in Database For Id : ${id}`,
+            });
+          } else
+            res.status(200).json({
+              status: "success",
+              data: SignleIdData,
+            });
+        }
+      } else if (typeOfUser === "user") {
+        const getData = await SocietyDataModel.findOne()
+          .select({ list: 1, _id: 0, __v: 1 })
+          .sort({ list: 1 });
+
+        //for sorting:
+        var TempList = getData.list;
+
+        if (!id) {
+          console.log("This is User Society data--------");
+          var newTemList = TempList.map((arr) => {
+            const obj = {
+              id: arr.id,
+              oid: arr.oid,
+              name: arr.name,
+              address: arr.address,
+              services: arr.services,
+            };
+            return obj;
+          });
+
+          console.log(newTemList);
+
+          res.status(200).send({
+            status: "success",
+            data: newTemList,
+          });
+        } else {
+          const SignleIdData = TempList.filter((arr) => {
+            return arr.id === id;
+          });
+
+          if (SignleIdData.length === 0) {
+            res.status(500).send({
+              status: false,
+              message: `Data is not Available in Database For Id : ${id}`,
+            });
+          } else
+            var newTemList = SignleIdData.map((arr) => {
+              const obj = {
+                id: arr.id,
+                oid: arr.oid,
+                name: arr.name,
+                address: arr.address,
+                services: arr.services,
+              };
+              return obj;
+            });
           res.status(200).json({
             status: "success",
-            data: getData,
+            data: newTemList,
           });
+        }
+      } else {
+        res.status(500).json({
+          status: false,
+          data: "Authentication Header is Missing",
+        });
       }
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
 );
 
-//List Output
 // Society Artist Data
 router.post(
   "/society-artist-data",
@@ -362,13 +424,13 @@ router.get(
   async (req, res) => {
     try {
       const id = req.body.id || req.query.id;
-      if (!id) {
-        const getData = await SocietyArtistDataModel.findOne()
-          .select({ list: 1, _id: 0, __v: 1 })
-          .sort({ list: 1 });
+      const getData = await SocietyArtistDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
 
-        //for sorting:
-        var TempList = getData.list;
+      //for sorting:
+      var TempList = getData.list;
+      if (!id) {
         console.log("This is Artist data--------");
         console.log(TempList);
 
@@ -377,30 +439,30 @@ router.get(
           data: TempList,
         });
       } else {
-        const getData = await SocietyArtistDataModel.findById(id);
-        if (!getData) {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
           res.status(500).send({
             status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+            message: `Data is not Available in Database For Id : ${id}`,
           });
         } else
           res.status(200).json({
             status: "success",
-            data: getData,
+            data: SignleIdData,
           });
       }
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
 );
 
-//List Output
 // Society Management Data
 router.post(
   "/society-management-data",
@@ -530,14 +592,14 @@ router.get(
   async (req, res) => {
     try {
       const id = req.body.id || req.query.id;
-      if (!id) {
-        const getData = await SocietyManagementDataModel.findOne()
-          .select({ list: 1, _id: 0, __v: 1 })
-          .sort({ list: 1 });
+      const getData = await SocietyManagementDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
 
-        //for sorting:
-        var TempList = getData.list;
-        console.log("This is Artist data--------");
+      //for sorting:
+      var TempList = getData.list;
+      if (!id) {
+        console.log("This is Management data--------");
         console.log(TempList);
 
         res.status(200).send({
@@ -545,24 +607,25 @@ router.get(
           data: TempList,
         });
       } else {
-        const getData = await SocietyManagementDataModel.findById(id);
-        if (!getData) {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
           res.status(500).send({
             status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+            message: `Data is not Available in Database For Id : ${id}`,
           });
         } else
           res.status(200).json({
             status: "success",
-            data: getData,
+            data: SignleIdData,
           });
       }
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
@@ -691,13 +754,13 @@ router.get(
   async (req, res) => {
     try {
       const id = req.body.id || req.query.id;
-      if (!id) {
-        const getData = await ServiceDataModel.findOne()
-          .select({ list: 1, _id: 0, __v: 1 })
-          .sort({ list: 1 });
+      const getData = await SocietyServiceDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
 
-        //for sorting:
-        var TempList = getData.list;
+      //for sorting:
+      var TempList = getData.list;
+      if (!id) {
         console.log("This is Artist data--------");
         console.log(TempList);
 
@@ -706,24 +769,25 @@ router.get(
           data: TempList,
         });
       } else {
-        const getData = await ServiceDataModel.findById(id);
-        if (!getData) {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
           res.status(500).send({
             status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+            message: `Data is not Available in Database For Id : ${id}`,
           });
         } else
           res.status(200).json({
             status: "success",
-            data: getData,
+            data: SignleIdData,
           });
       }
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
@@ -891,46 +955,111 @@ router.get(
   upload.single("image"),
   async (req, res) => {
     try {
+      const typeOfUser = req.get("usertype");
+      //console.log(typeOfUser);
       const id = req.body.id || req.query.id;
-      if (!id) {
+      if (typeOfUser === "admin") {
         const getData = await ServiceDataModel.findOne()
           .select({ list: 1, _id: 0, __v: 1 })
           .sort({ list: 1 });
 
         //for sorting:
         var TempList = getData.list;
-        console.log("This is Artist data--------");
-        console.log(TempList);
 
-        res.status(200).send({
-          status: "success",
-          data: TempList,
-        });
-      } else {
-        const getData = await ServiceDataModel.findById(id);
-        if (!getData) {
-          res.status(500).send({
-            status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+        if (!id) {
+          console.log("This is Service data--------");
+
+          res.status(200).send({
+            status: "success",
+            data: TempList,
           });
-        } else
+        } else {
+          const SignleIdData = TempList.filter((arr) => {
+            return arr.id === id;
+          });
+
+          if (SignleIdData.length === 0) {
+            res.status(500).send({
+              status: false,
+              message: `Data is not Available in Database For Id : ${id}`,
+            });
+          } else
+            res.status(200).json({
+              status: "success",
+              data: SignleIdData,
+            });
+        }
+      } else if (typeOfUser === "user") {
+        const getData = await ServiceDataModel.findOne()
+          .select({ list: 1, _id: 0, __v: 1 })
+          .sort({ list: 1 });
+
+        //for sorting:
+        var TempList = getData.list;
+
+        if (!id) {
+          console.log("This is Service data--------");
+          var newTemList = TempList.map((arr) => {
+            const obj = {
+              id: arr.id,
+              oid: arr.oid,
+              name: arr.name,
+              image: arr.image,
+              bgcolor: arr.bgcolor,
+              textcolor: arr.textcolor,
+              description: arr.description,
+            };
+            return obj;
+          });
+
+          console.log(newTemList);
+
+          res.status(200).send({
+            status: "success",
+            data: newTemList,
+          });
+        } else {
+          const SignleIdData = TempList.filter((arr) => {
+            return arr.id === id;
+          });
+
+          if (SignleIdData.length === 0) {
+            res.status(500).send({
+              status: false,
+              message: `Data is not Available in Database For Id : ${id}`,
+            });
+          } else
+            var newTemList = SignleIdData.map((arr) => {
+              const obj = {
+                id: arr.id,
+                oid: arr.oid,
+                name: arr.name,
+                image: arr.image,
+                bgcolor: arr.bgcolor,
+                textcolor: arr.textcolor,
+                description: arr.description,
+              };
+              return obj;
+            });
           res.status(200).json({
             status: "success",
-            data: getData,
+            data: newTemList,
           });
+        }
+      } else {
+        res.status(500).json({
+          status: false,
+          data: "Authentication Header is Missing",
+        });
       }
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
 );
-
-module.exports = router;
 
 // Service catagory Data
 router.post(
@@ -1094,40 +1223,109 @@ router.get(
   upload.single("image"),
   async (req, res) => {
     try {
+      const typeOfUser = req.get("usertype");
+      //console.log(typeOfUser);
       const id = req.body.id || req.query.id;
-      if (!id) {
+      if (typeOfUser === "admin") {
         const getData = await ServiceDetailDataModel.findOne()
           .select({ list: 1, _id: 0, __v: 1 })
           .sort({ list: 1 });
 
         //for sorting:
         var TempList = getData.list;
-        console.log("This is Artist data--------");
-        console.log(TempList);
 
-        res.status(200).send({
-          status: "success",
-          data: TempList,
-        });
-      } else {
-        const getData = await ServiceDetailDataModel.findById(id);
-        if (!getData) {
-          res.status(500).send({
-            status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+        if (!id) {
+          console.log("This is Service Category data--------");
+
+          res.status(200).send({
+            status: "success",
+            data: TempList,
           });
-        } else
+        } else {
+          const SignleIdData = TempList.filter((arr) => {
+            return arr.id === id;
+          });
+
+          if (SignleIdData.length === 0) {
+            res.status(500).send({
+              status: false,
+              message: `Data is not Available in Database For Id : ${id}`,
+            });
+          } else
+            res.status(200).json({
+              status: "success",
+              data: SignleIdData,
+            });
+        }
+      } else if (typeOfUser === "user") {
+        const getData = await ServiceDetailDataModel.findOne()
+          .select({ list: 1, _id: 0, __v: 1 })
+          .sort({ list: 1 });
+
+        //for sorting:
+        var TempList = getData.list;
+
+        if (!id) {
+          console.log("This is Service Category data--------");
+          var newTemList = TempList.map((arr) => {
+            const obj = {
+              id: arr.id,
+              oid: arr.oid,
+              name: arr.name,
+              image: arr.image,
+              bgcolor: arr.bgcolor,
+              textcolor: arr.textcolor,
+              description: arr.description,
+              price: arr.price,
+            };
+            return obj;
+          });
+
+          console.log(newTemList);
+
+          res.status(200).send({
+            status: "success",
+            data: newTemList,
+          });
+        } else {
+          const SignleIdData = TempList.filter((arr) => {
+            return arr.id === id;
+          });
+
+          if (SignleIdData.length === 0) {
+            res.status(500).send({
+              status: false,
+              message: `Data is not Available in Database For Id : ${id}`,
+            });
+          } else
+            var newTemList = SignleIdData.map((arr) => {
+              const obj = {
+                id: arr.id,
+                oid: arr.oid,
+                name: arr.name,
+                image: arr.image,
+                bgcolor: arr.bgcolor,
+                textcolor: arr.textcolor,
+                description: arr.description,
+                price: arr.price,
+              };
+              return obj;
+            });
           res.status(200).json({
             status: "success",
-            data: getData,
+            data: newTemList,
           });
+        }
+      } else {
+        res.status(500).json({
+          status: false,
+          data: "Authentication Header is Missing",
+        });
       }
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
@@ -1258,40 +1456,103 @@ router.post(
 // //THis is get for priicng data
 router.get("/pricing", middleware, upload.single("image"), async (req, res) => {
   try {
+    const typeOfUser = req.get("usertype");
+    //console.log(typeOfUser);
     const id = req.body.id || req.query.id;
-    if (!id) {
+    if (typeOfUser === "admin") {
       const getData = await PricingDataModel.findOne()
         .select({ list: 1, _id: 0, __v: 1 })
         .sort({ list: 1 });
 
       //for sorting:
       var TempList = getData.list;
-      console.log("This is Artist data--------");
-      console.log(TempList);
 
-      res.status(200).send({
-        status: "success",
-        data: TempList,
-      });
-    } else {
-      const getData = await PricingDataModel.findById(id);
-      if (!getData) {
-        res.status(500).send({
-          status: false,
-          message: (
-            `Data is not Available in Database For Id : ${id}`
-          ),
+      if (!id) {
+        console.log("This is Pricing data--------");
+
+        res.status(200).send({
+          status: "success",
+          data: TempList,
         });
-      } else
+      } else {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
+          res.status(500).send({
+            status: false,
+            message: `Data is not Available in Database For Id : ${id}`,
+          });
+        } else
+          res.status(200).json({
+            status: "success",
+            data: SignleIdData,
+          });
+      }
+    } else if (typeOfUser === "user") {
+      const getData = await PricingDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
+
+      //for sorting:
+      var TempList = getData.list;
+
+      if (!id) {
+        console.log("This is Pricing data--------");
+        var newTemList = TempList.map((arr) => {
+          const obj = {
+            id: arr.id,
+            oid: arr.oid,
+            name: arr.name,
+            price: arr.price,
+            subCatagory: arr.subCatagorys,
+          };
+          return obj;
+        });
+
+        console.log(newTemList);
+
+        res.status(200).send({
+          status: "success",
+          data: newTemList,
+        });
+      } else {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
+          res.status(500).send({
+            status: false,
+            message: `Data is not Available in Database For Id : ${id}`,
+          });
+        } else
+          var newTemList = SignleIdData.map((arr) => {
+            const obj = {
+              id: arr.id,
+              oid: arr.oid,
+              name: arr.name,
+              price: arr.price,
+              subCatagory: arr.subCatagorys,
+            };
+            return obj;
+          });
         res.status(200).json({
           status: "success",
-          data: getData,
+          data: newTemList,
         });
+      }
+    } else {
+      res.status(500).json({
+        status: false,
+        data: "Authentication Header is Missing",
+      });
     }
   } catch (e) {
     res.status(500).send({
       staus: false,
-      message: (e.message),
+      message: e.message,
     });
   }
 });
@@ -1427,13 +1688,13 @@ router.post(
 router.get("/artist", middleware, upload.single("image"), async (req, res) => {
   try {
     const id = req.body.id || req.query.id;
-    if (!id) {
-      const getData = await ArtistDataModel.findOne()
-        .select({ list: 1, _id: 0, __v: 1 })
-        .sort({ list: 1 });
+    const getData = await ArtistDataModel.findOne()
+      .select({ list: 1, _id: 0, __v: 1 })
+      .sort({ list: 1 });
 
-      //for sorting:
-      var TempList = getData.list;
+    //for sorting:
+    var TempList = getData.list;
+    if (!id) {
       console.log("This is Artist data--------");
       console.log(TempList);
 
@@ -1442,24 +1703,25 @@ router.get("/artist", middleware, upload.single("image"), async (req, res) => {
         data: TempList,
       });
     } else {
-      const getData = await ArtistDataModel.findById(id);
-      if (!getData) {
+      const SignleIdData = TempList.filter((arr) => {
+        return arr.id === id;
+      });
+
+      if (SignleIdData.length === 0) {
         res.status(500).send({
           status: false,
-          message: (
-            `Data is not Available in Database For Id : ${id}`
-          ),
+          message: `Data is not Available in Database For Id : ${id}`,
         });
       } else
         res.status(200).json({
           status: "success",
-          data: getData,
+          data: SignleIdData,
         });
     }
   } catch (e) {
     res.status(500).send({
       staus: false,
-      message: (e.message),
+      message: e.message,
     });
   }
 });
@@ -1593,13 +1855,13 @@ router.get(
   async (req, res) => {
     try {
       const id = req.body.id || req.query.id;
-      if (!id) {
-        const getData = await ManagementDataModel.findOne()
-          .select({ list: 1, _id: 0, __v: 1 })
-          .sort({ list: 1 });
+      const getData = await ManagementDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
 
-        //for sorting:
-        var TempList = getData.list;
+      //for sorting:
+      var TempList = getData.list;
+      if (!id) {
         console.log("This is Artist data--------");
         console.log(TempList);
 
@@ -1608,24 +1870,25 @@ router.get(
           data: TempList,
         });
       } else {
-        const getData = await ManagementDataModel.findById(id);
-        if (!getData) {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
           res.status(500).send({
             status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+            message: `Data is not Available in Database For Id : ${id}`,
           });
         } else
           res.status(200).json({
             status: "success",
-            data: getData,
+            data: SignleIdData,
           });
       }
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
@@ -1778,9 +2041,7 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+            message: `Data is not Available in Database For Id : ${id}`,
           });
         } else
           res.status(200).json({
@@ -1791,7 +2052,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
@@ -1920,40 +2181,101 @@ router.post("/time", middleware, upload1.single("image"), async (req, res) => {
 // //THis is get for time data
 router.get("/time", middleware, upload.single("image"), async (req, res) => {
   try {
+    const typeOfUser = req.get("usertype");
+    //console.log(typeOfUser);
     const id = req.body.id || req.query.id;
-    if (!id) {
+    if (typeOfUser === "admin") {
       const getData = await TimeDataModel.findOne()
         .select({ list: 1, _id: 0, __v: 1 })
         .sort({ list: 1 });
 
       //for sorting:
       var TempList = getData.list;
-      console.log("This is Artist data--------");
-      console.log(TempList);
 
-      res.status(200).send({
-        status: "success",
-        data: TempList,
-      });
-    } else {
-      const getData = await TimeDataModel.findById(id);
-      if (!getData) {
-        res.status(500).send({
-          status: false,
-          message: (
-            `Data is not Available in Database For Id : ${id}`
-          ),
+      if (!id) {
+        console.log("This is Time data--------");
+
+        res.status(200).send({
+          status: "success",
+          data: TempList,
         });
-      } else
+      } else {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
+          res.status(500).send({
+            status: false,
+            message: `Data is not Available in Database For Id : ${id}`,
+          });
+        } else
+          res.status(200).json({
+            status: "success",
+            data: SignleIdData,
+          });
+      }
+    } else if (typeOfUser === "user") {
+      const getData = await TimeDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
+
+      //for sorting:
+      var TempList = getData.list;
+
+      if (!id) {
+        console.log("This is User Society data--------");
+        var newTemList = TempList.map((arr) => {
+          const obj = {
+            id: arr.id,
+            oid: arr.oid,
+            date: arr.date,
+            time: arr.time,
+          };
+          return obj;
+        });
+
+        console.log(newTemList);
+
+        res.status(200).send({
+          status: "success",
+          data: newTemList,
+        });
+      } else {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
+          res.status(500).send({
+            status: false,
+            message: `Data is not Available in Database For Id : ${id}`,
+          });
+        } else
+          var newTemList = SignleIdData.map((arr) => {
+            const obj = {
+              id: arr.id,
+              oid: arr.oid,
+              date: arr.date,
+              time: arr.time,
+            };
+            return obj;
+          });
         res.status(200).json({
           status: "success",
-          data: getData,
+          data: newTemList,
         });
+      }
+    } else {
+      res.status(500).json({
+        status: false,
+        data: "Authentication Header is Missing",
+      });
     }
   } catch (e) {
     res.status(500).send({
       staus: false,
-      message: (e.message),
+      message: e.message,
     });
   }
 });
@@ -2105,13 +2427,13 @@ router.post(
 router.get("/booking", middleware, upload.single("image"), async (req, res) => {
   try {
     const id = req.body.id || req.query.id;
-    if (!id) {
-      const getData = await BookingDataModel.findOne()
-        .select({ list: 1, _id: 0, __v: 1 })
-        .sort({ list: 1 });
+    const getData = await BookingDataModel.findOne()
+      .select({ list: 1, _id: 0, __v: 1 })
+      .sort({ list: 1 });
 
-      //for sorting:
-      var TempList = getData.list;
+    //for sorting:
+    var TempList = getData.list;
+    if (!id) {
       console.log("This is Artist data--------");
       console.log(TempList);
 
@@ -2120,24 +2442,25 @@ router.get("/booking", middleware, upload.single("image"), async (req, res) => {
         data: TempList,
       });
     } else {
-      const getData = await BookingDataModel.findById(id);
-      if (!getData) {
+      const SignleIdData = TempList.filter((arr) => {
+        return arr.id === id;
+      });
+
+      if (SignleIdData.length === 0) {
         res.status(500).send({
           status: false,
-          message: (
-            `Data is not Available in Database For Id : ${id}`
-          ),
+          message: `Data is not Available in Database For Id : ${id}`,
         });
       } else
         res.status(200).json({
           status: "success",
-          data: getData,
+          data: SignleIdData,
         });
     }
   } catch (e) {
     res.status(500).send({
       staus: false,
-      message: (e.message),
+      message: e.message,
     });
   }
 });
@@ -2267,13 +2590,13 @@ router.get(
   async (req, res) => {
     try {
       const id = req.body.id || req.query.id;
-      if (!id) {
-        const getData = await BookedServiceDataModel.findOne()
-          .select({ list: 1, _id: 0, __v: 1 })
-          .sort({ list: 1 });
+      const getData = await BookedServiceDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
 
-        //for sorting:
-        var TempList = getData.list;
+      //for sorting:
+      var TempList = getData.list;
+      if (!id) {
         console.log("This is Artist data--------");
         console.log(TempList);
 
@@ -2282,24 +2605,25 @@ router.get(
           data: TempList,
         });
       } else {
-        const getData = await BookedServiceDataModel.findById(id);
-        if (!getData) {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
           res.status(500).send({
             status: false,
-            message: (
-              `Data is not Available in Database For Id : ${id}`
-            ),
+            message: `Data is not Available in Database For Id : ${id}`,
           });
         } else
           res.status(200).json({
             status: "success",
-            data: getData,
+            data: SignleIdData,
           });
       }
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: (e.message),
+        message: e.message,
       });
     }
   }
