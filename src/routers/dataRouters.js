@@ -206,8 +206,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -219,7 +219,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
@@ -381,8 +381,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -394,7 +394,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
@@ -549,8 +549,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -562,7 +562,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
@@ -710,8 +710,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -723,7 +723,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
@@ -911,8 +911,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -924,7 +924,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
@@ -1114,8 +1114,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -1127,7 +1127,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
@@ -1278,8 +1278,8 @@ router.get("/pricing", middleware, upload.single("image"), async (req, res) => {
       if (!getData) {
         res.status(500).send({
           status: false,
-          message: errorFormatter(
-            `: Data is not Available in Database For Id : ${id}`
+          message: (
+            `Data is not Available in Database For Id : ${id}`
           ),
         });
       } else
@@ -1291,7 +1291,7 @@ router.get("/pricing", middleware, upload.single("image"), async (req, res) => {
   } catch (e) {
     res.status(500).send({
       staus: false,
-      message: errorFormatter(e.message),
+      message: (e.message),
     });
   }
 });
@@ -1446,8 +1446,8 @@ router.get("/artist", middleware, upload.single("image"), async (req, res) => {
       if (!getData) {
         res.status(500).send({
           status: false,
-          message: errorFormatter(
-            `: Data is not Available in Database For Id : ${id}`
+          message: (
+            `Data is not Available in Database For Id : ${id}`
           ),
         });
       } else
@@ -1459,7 +1459,7 @@ router.get("/artist", middleware, upload.single("image"), async (req, res) => {
   } catch (e) {
     res.status(500).send({
       staus: false,
-      message: errorFormatter(e.message),
+      message: (e.message),
     });
   }
 });
@@ -1612,8 +1612,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -1625,7 +1625,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
@@ -1778,8 +1778,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -1791,7 +1791,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
@@ -1940,8 +1940,8 @@ router.get("/time", middleware, upload.single("image"), async (req, res) => {
       if (!getData) {
         res.status(500).send({
           status: false,
-          message: errorFormatter(
-            `: Data is not Available in Database For Id : ${id}`
+          message: (
+            `Data is not Available in Database For Id : ${id}`
           ),
         });
       } else
@@ -1953,7 +1953,7 @@ router.get("/time", middleware, upload.single("image"), async (req, res) => {
   } catch (e) {
     res.status(500).send({
       staus: false,
-      message: errorFormatter(e.message),
+      message: (e.message),
     });
   }
 });
@@ -2124,8 +2124,8 @@ router.get("/booking", middleware, upload.single("image"), async (req, res) => {
       if (!getData) {
         res.status(500).send({
           status: false,
-          message: errorFormatter(
-            `: Data is not Available in Database For Id : ${id}`
+          message: (
+            `Data is not Available in Database For Id : ${id}`
           ),
         });
       } else
@@ -2137,7 +2137,7 @@ router.get("/booking", middleware, upload.single("image"), async (req, res) => {
   } catch (e) {
     res.status(500).send({
       staus: false,
-      message: errorFormatter(e.message),
+      message: (e.message),
     });
   }
 });
@@ -2286,8 +2286,8 @@ router.get(
         if (!getData) {
           res.status(500).send({
             status: false,
-            message: errorFormatter(
-              `: Data is not Available in Database For Id : ${id}`
+            message: (
+              `Data is not Available in Database For Id : ${id}`
             ),
           });
         } else
@@ -2299,7 +2299,7 @@ router.get(
     } catch (e) {
       res.status(500).send({
         staus: false,
-        message: errorFormatter(e.message),
+        message: (e.message),
       });
     }
   }
