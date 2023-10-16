@@ -2,6 +2,16 @@ const express = require("express");
 const router = new express.Router();
 const generateUniqueId = require("generate-unique-id");
 const multer = require("multer");
+
+const {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+} = require("firebase/storage");
+
+const storage1 = require("../firebase");
+const storage2 = getStorage();
 //setting up multer as a middleware to grap photo upload
 const upload1 = multer({ storage2: multer.memoryStorage() });
 
@@ -20,7 +30,9 @@ const {
   TimeDataModel,
   BookingDataModel,
   BookedServiceDataModel,
+  UserDataModel,
 } = require("../models/dataModel");
+
 const { send, listenerCount } = require("process");
 
 // const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require("firebase/storage");
@@ -816,23 +828,26 @@ router.post(
       }
 
       // for uploading pics
-      //const storageRef = ref(storage2, `Services/${"Service" + " " + i * 10}`);
+      const storageRef = ref(
+        storage2,
+        `Groobe-Events/Service-Data/${"Service" + " " + i * 10}`
+      );
 
-      // const metadata = {
-      //   contentType: req.file.mimetype,
-      // };
+      const metadata = {
+        contentType: req.file.mimetype,
+      };
 
-      // //upload the file in the bucket storage
-      // const snapshot = await uploadBytesResumable(
-      //   storageRef,
-      //   req.file.buffer,
-      //   metadata
-      // );
-      // //by using uploadbytesres... we can control the progress of uploading like pause resume etcc;
-      // const downloadURL = await getDownloadURL(snapshot.ref);
-      // console.log(
-      //   "File is uploaded to the Firebase! " + "About" + " " + i * 10
-      // );
+      //upload the file in the bucket storage
+      const snapshot = await uploadBytesResumable(
+        storageRef,
+        req.file.buffer,
+        metadata
+      );
+      //by using uploadbytesres... we can control the progress of uploading like pause resume etcc;
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      console.log(
+        "File is uploaded to the Firebase! " + "Service" + " " + i * 10
+      );
 
       //Update data by id
       const Uid = req.body.id || req.params.id;
@@ -862,7 +877,7 @@ router.post(
           newList[k].isRecommended =
             req.body.isRecommended || newList[k].isRecommended;
           if (!req.file) newList[k].image = newList[k].image;
-          else newList[k].image = req.file.originalname;
+          else newList[k].image = downloadURL;
 
           const getData = await ServiceDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
@@ -885,7 +900,7 @@ router.post(
         });
         let oid = 10 * i;
         let name = req.body.name;
-        let image = req.file.originalname;
+        let image = downloadURL;
         let bgcolor = req.body.bgcolor;
         let textcolor = req.body.textcolor;
         let description = req.body.description;
@@ -1084,23 +1099,26 @@ router.post(
       }
 
       // for uploading pics
-      //const storageRef = ref(storage2, `Services/${"Service" + " " + i * 10}`);
+      const storageRef = ref(
+        storage2,
+        `Groobe-Events/Service-Category-Data/${"Detail" + " " + i * 10}`
+      );
 
-      // const metadata = {
-      //   contentType: req.file.mimetype,
-      // };
+      const metadata = {
+        contentType: req.file.mimetype,
+      };
 
-      // //upload the file in the bucket storage
-      // const snapshot = await uploadBytesResumable(
-      //   storageRef,
-      //   req.file.buffer,
-      //   metadata
-      // );
-      // //by using uploadbytesres... we can control the progress of uploading like pause resume etcc;
-      // const downloadURL = await getDownloadURL(snapshot.ref);
-      // console.log(
-      //   "File is uploaded to the Firebase! " + "About" + " " + i * 10
-      // );
+      //upload the file in the bucket storage
+      const snapshot = await uploadBytesResumable(
+        storageRef,
+        req.file.buffer,
+        metadata
+      );
+      //by using uploadbytesres... we can control the progress of uploading like pause resume etcc;
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      console.log(
+        "File is uploaded to the Firebase! " + "Service" + " " + i * 10
+      );
 
       //Update data by id
       const Uid = req.body.id || req.params.id;
@@ -1128,7 +1146,7 @@ router.post(
           newList[k].sid = req.body.sid || newList[k].sid;
           newList[k].serviceId = req.body.serviceId || newList[k].serviceId;
           if (!req.file) newList[k].image = newList[k].image;
-          else newList[k].image = req.file.originalname;
+          else newList[k].image = downloadURL;
 
           const getData = await ServiceDetailDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
@@ -1151,7 +1169,7 @@ router.post(
         });
         let oid = 10 * i;
         let name = req.body.name;
-        let image = req.file.originalname;
+        let image = downloadURL;
         let bgcolor = req.body.bgcolor;
         let textcolor = req.body.textcolor;
         let description = req.body.description;
@@ -2628,5 +2646,140 @@ router.get(
     }
   }
 );
+
+//User Data
+router.post("/user-data", middleware, upload1.none(), async (req, res) => {
+  try {
+    const getData = await UserDataModel.find();
+    // if already data
+    if (getData.length != 0) {
+      if (getData[getData.length - 1]) {
+        i = getData[getData.length - 1].oid / 10 + 1;
+        //console.log(i);
+      } else {
+        var i = 1;
+      }
+    } else {
+      var i = 1;
+    }
+    //Update data by id
+    const Uid = req.body.uid || req.params.uid;
+    const idData = await UserDataModel.findOne({ uid: Uid }).exec();
+
+    if (Uid) {
+      if (idData) {
+        if (
+          req.body.name ||
+          req.body.mobile ||
+          req.body.isVerified ||
+          req.body.societyId ||
+          req.body.serviceId ||
+          req.body.oid ||
+          req.body.bookingStatus
+        ) {
+          const updateData = await UserDataModel.findOneAndUpdate(
+            { uid: Uid },
+            {
+              $set: {
+                name: req.body.name,
+                mobile: req.body.mobile,
+                isVerified: req.body.isVerified,
+                societyId: req.body.societyId,
+                serviceId: req.body.serviceId,
+                oid: req.body.oid,
+                bookingStatus: req.body.bookingStatus,
+              },
+            },
+            {
+              new: true,
+            }
+          ).select({ _id: 0 });
+          res.status(201).send({
+            staus: true,
+            Data: updateData,
+          });
+        } else {
+          res.status(400).send({
+            staus: false,
+            message: `Enter Valid Input field to be Updated for id : ${Uid}`,
+          });
+          return;
+        }
+      } else {
+        res.status(400).send({
+          staus: false,
+          message: `No matching Found in Database for id : ${Uid}`,
+        });
+      }
+    } else {
+      const User = new UserDataModel({
+        uid: generateUniqueId({
+          length: 12,
+        }),
+        oid: i * 10,
+        name: req.body.name,
+        mobile: req.body.mobile,
+        isVerified: req.body.isVerified,
+        societyId: req.body.societyId,
+        serviceId: req.body.serviceId,
+        bookingStatus: req.body.bookingStatus,
+      });
+      const sendData = await User.save();
+      res.status(201).send({
+        staus: true,
+        message: "The following data is send to Database ",
+        Data: sendData,
+      });
+    }
+  } catch (e) {
+    //console.log(e);
+    res.status(404).send({
+      staus: false,
+      message: e.message,
+    });
+  }
+});
+
+//THis is get for User data
+router.get("/user-data", middleware, upload.none(), async (req, res) => {
+  try {
+    const Uid = req.body.uid || req.query.uid;
+    if (!Uid) {
+      const getData = await UserDataModel.find()
+        .select({ _id: 0 })
+        .sort({ oid: 1 });
+
+      if (getData.length != 0)
+        res.status(200).send({
+          status: "success",
+          data: getData,
+        });
+      else {
+        res.status(500).send({
+          status: false,
+          message: `No Data Is Available`,
+        });
+      }
+    } else {
+      const getData = await UserDataModel.findOne({ uid: Uid }).exec();
+      if (!getData) {
+        res.status(500).send({
+          status: false,
+          message: `Data is not Available in Database For Id : ${Uid}`,
+        });
+      } else
+        res.status(200).json({
+          status: "success",
+          data: getData,
+        });
+    }
+  } catch (e) {
+    res.status(500).send({
+      staus: false,
+      message: e.message,
+    });
+  }
+});
+
 
 module.exports = router;
