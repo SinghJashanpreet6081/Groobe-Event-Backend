@@ -981,6 +981,34 @@ router.get(
         //for sorting:
         var TempList = getData.list;
 
+        const serviceCategory = await ServiceDetailDataModel.findOne()
+          .select({ list: 1, _id: 0, __v: 1 })
+          .sort({ list: 1 });
+
+        const updatedTempList = TempList.map((arr) => {
+          const ids = arr.service_category;
+          let result;
+
+          if (ids.length > 12) {
+            const idsArr = ids.split(",").map((a) => a.trim());
+
+            console.log(idsArr);
+            result = idsArr.map((a) => {
+              return serviceCategory.list.find((element) => element.id === a);
+            });
+          } else {
+            result = serviceCategory.list.find((element) => element.id === ids);
+          }
+
+          arr.service_category = result; // Update the service_category field
+          return arr; // Return the updated object
+        });
+
+        //console.log(updatedTempList); // This will contain the updated objects
+
+        // console.log("hello" , dd)
+        // console.log(dd);
+
         if (!id) {
           console.log("This is Service data--------");
 
@@ -2328,17 +2356,17 @@ router.post(
         for (var j = 0; j < newList.length; j++) {
           if (newList[j].id == Uid) {
             k = j;
-            break;
+            break;                                                    
           }
         }
         if (k == null) {
           res.status(500).send({
-            status: false,
+            status: false,            
             message: `Data is not Available in Database For Id : ${id}`,
           });
         } else {
           newList[k].sid = req.body.sid || newList[k].sid;
-          newList[k].bookId = req.body.bookId || newList[k].bookId;
+          //newList[k].bookId = req.body.bookId || newList[k].bookId;
           newList[k].time = req.body.time || newList[k].time;
           newList[k].date = req.body.date || newList[k].date;
           newList[k].location = req.body.location || newList[k].location;
@@ -2373,7 +2401,7 @@ router.post(
         let oid = 10 * i;
         let sid = req.body.sid;
         let time = req.body.time;
-        let bookId = req.body.bookId;
+        //let bookId = req.body.bookId;
         let date = req.body.date;
         let location = req.body.location;
         let name = req.body.name;
@@ -2387,7 +2415,7 @@ router.post(
           oid,
           sid,
           time,
-          bookId,
+          //bookId,
           date,
           location,
           name,
@@ -2674,8 +2702,7 @@ router.post("/user-data", middleware, upload1.none(), async (req, res) => {
           req.body.isVerified ||
           req.body.societyId ||
           req.body.serviceId ||
-          req.body.oid ||
-          req.body.bookingStatus
+          req.body.oid 
         ) {
           const updateData = await UserDataModel.findOneAndUpdate(
             { uid: Uid },
@@ -2687,7 +2714,7 @@ router.post("/user-data", middleware, upload1.none(), async (req, res) => {
                 societyId: req.body.societyId,
                 serviceId: req.body.serviceId,
                 oid: req.body.oid,
-                bookingStatus: req.body.bookingStatus,
+               
               },
             },
             {
@@ -2722,7 +2749,7 @@ router.post("/user-data", middleware, upload1.none(), async (req, res) => {
         isVerified: req.body.isVerified,
         societyId: req.body.societyId,
         serviceId: req.body.serviceId,
-        bookingStatus: req.body.bookingStatus,
+    
       });
       const sendData = await User.save();
       res.status(201).send({
@@ -2780,6 +2807,5 @@ router.get("/user-data", middleware, upload.none(), async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

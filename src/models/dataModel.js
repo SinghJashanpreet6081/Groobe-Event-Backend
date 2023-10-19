@@ -74,9 +74,6 @@ const UserDataSchema = new mongoose.Schema({
   serviceId: {
     type: String,
   },
-  bookingStatus:{
-   type: String,
-  }
 });
 
 //Creating Model
