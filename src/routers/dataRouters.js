@@ -106,18 +106,19 @@ router.post(
           newList[k].management = req.body.management || newList[k].management;
           newList[k].items = req.body.items || newList[k].items;
           newList[k].services = req.body.services || newList[k].services;
-
-          const getData = await SocietyDataModel.findOne()
+          newList[k].isActive =
+            req.body.isActive || newList[k].isActive;
+            const getData = await SocietyDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
-          const _id = getData._id;
-          const updateData = await SocietyDataModel.findOneAndUpdate(
-            { _id: _id }, // Replace '_id' with the correct identifier field for your document
-            { $set: { list: newList } },
-            { new: true }
-          );
-
-          console.log(updateData);
+            const _id = getData._id;
+            const updateData = await SocietyDataModel.findOneAndUpdate(
+              { _id: _id }, // Replace '_id' with the correct identifier field for your document
+              { $set: { list: newList } },
+              { new: true }
+              );
+              
+              console.log(updateData);
           var list = updateData.list;
           res.status(201).send({
             staus: true,
@@ -136,6 +137,7 @@ router.post(
         let management = req.body.management;
         let items = req.body.items;
         let services = req.body.services;
+        let isActive = req.body.isActive;
         obj = {
           id,
           oid,
@@ -145,6 +147,7 @@ router.post(
           management,
           items,
           services,
+          isActive
         };
         ls.push(obj);
 
@@ -876,6 +879,8 @@ router.post(
           newList[k].isPopular = req.body.isPopular || newList[k].isPopular;
           newList[k].isRecommended =
             req.body.isRecommended || newList[k].isRecommended;
+          newList[k].isActive =
+            req.body.isActive || newList[k].isActive;
           if (!req.file) newList[k].image = newList[k].image;
           else newList[k].image = downloadURL;
 
@@ -906,6 +911,7 @@ router.post(
         let description = req.body.description;
         let service_category = req.body.service_category;
         let isPopular = req.body.isPopular;
+        let isActive = req.body.isActive;
 
         obj = {
           id,
@@ -917,6 +923,7 @@ router.post(
           description,
           service_category,
           isPopular,
+          isActive
         };
         ls.push(obj);
 
@@ -1421,23 +1428,25 @@ router.post(
           newList[k].price = req.body.price || newList[k].price;
           newList[k].subCatagory =
             req.body.subCatagory || newList[k].subCatagory;
-
-          const getData = await PricingDataModel.findOne()
+            newList[k].isActive =
+            req.body.isActive || newList[k].isActive;
+            
+            const getData = await PricingDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
-          const _id = getData._id;
-          const updateData = await PricingDataModel.findOneAndUpdate(
-            { _id: _id }, // Replace '_id' with the correct identifier field for your document
+            const _id = getData._id;
+            const updateData = await PricingDataModel.findOneAndUpdate(
+              { _id: _id }, // Replace '_id' with the correct identifier field for your document
             { $set: { list: newList } },
             { new: true }
-          );
-          var list = updateData.list;
-          res.status(201).send({
-            staus: true,
-            Data: list,
-          });
-        }
-      } else {
+            );
+            var list = updateData.list;
+            res.status(201).send({
+              staus: true,
+              Data: list,
+            });
+          }
+        } else {
         let id = generateUniqueId({
           length: 12,
         });
@@ -1446,6 +1455,7 @@ router.post(
         let sid = req.body.sid;
         let price = req.body.price;
         let subCatagory = req.body.subCatagory;
+        let isActive = req.body.isActive;
         obj = {
           id,
           oid,
@@ -1453,6 +1463,7 @@ router.post(
           sid,
           price,
           subCatagory,
+          isActive
         };
         ls.push(obj);
 
@@ -1648,8 +1659,9 @@ router.post(
           newList[k].experience = req.body.experience || newList[k].experience;
           newList[k].sid = req.body.sid || newList[k].sid;
           newList[k].price = req.body.price || newList[k].price;
-
-          const getData = await ArtistDataModel.findOne()
+          newList[k].isActive =
+            req.body.isActive || newList[k].isActive;
+            const getData = await ArtistDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
           const _id = getData._id;
@@ -1675,6 +1687,7 @@ router.post(
         let address = req.body.address;
         let mobile = req.body.mobile;
         let experience = req.body.experience;
+            let isActive = req.body.isActive;
         obj = {
           id,
           oid,
@@ -1684,6 +1697,7 @@ router.post(
           address,
           mobile,
           experience,
+          isActive
         };
         ls.push(obj);
 
@@ -1814,31 +1828,33 @@ router.post(
           newList[k].name = req.body.name || newList[k].name;
           newList[k].mobile = req.body.mobile || newList[k].mobile;
           newList[k].sid = req.body.sid || newList[k].sid;
-
+          newList[k].isActive =
+          req.body.isActive || newList[k].isActive;
           const getData = await ManagementDataModel.findOne()
-            .select({ list: 1, _id: 1, __v: 1 })
+          .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
           const _id = getData._id;
           const updateData = await ManagementDataModel.findOneAndUpdate(
             { _id: _id }, // Replace '_id' with the correct identifier field for your document
             { $set: { list: newList } },
             { new: true }
-          );
-          var list = updateData.list;
-          res.status(201).send({
-            staus: true,
-            Data: list,
-          });
-        }
-      } else {
+            );
+            var list = updateData.list;
+            res.status(201).send({
+              staus: true,
+              Data: list,
+            });
+          }
+        } else {
         let id = generateUniqueId({
           length: 12,
         });
         let oid = 10 * i;
         let name = req.body.name;
         let sid = req.body.sid;
-
+        
         let mobile = req.body.mobile;
+        let isActive = req.body.isActive;
 
         obj = {
           id,
@@ -1847,6 +1863,7 @@ router.post(
           sid,
 
           mobile,
+          isActive
         };
         ls.push(obj);
 
@@ -2356,12 +2373,12 @@ router.post(
         for (var j = 0; j < newList.length; j++) {
           if (newList[j].id == Uid) {
             k = j;
-            break;                                                    
+            break;
           }
         }
         if (k == null) {
           res.status(500).send({
-            status: false,            
+            status: false,
             message: `Data is not Available in Database For Id : ${id}`,
           });
         } else {
@@ -2702,7 +2719,7 @@ router.post("/user-data", middleware, upload1.none(), async (req, res) => {
           req.body.isVerified ||
           req.body.societyId ||
           req.body.serviceId ||
-          req.body.oid 
+          req.body.oid
         ) {
           const updateData = await UserDataModel.findOneAndUpdate(
             { uid: Uid },
@@ -2714,7 +2731,6 @@ router.post("/user-data", middleware, upload1.none(), async (req, res) => {
                 societyId: req.body.societyId,
                 serviceId: req.body.serviceId,
                 oid: req.body.oid,
-               
               },
             },
             {
@@ -2749,7 +2765,6 @@ router.post("/user-data", middleware, upload1.none(), async (req, res) => {
         isVerified: req.body.isVerified,
         societyId: req.body.societyId,
         serviceId: req.body.serviceId,
-    
       });
       const sendData = await User.save();
       res.status(201).send({
@@ -2805,6 +2820,26 @@ router.get("/user-data", middleware, upload.none(), async (req, res) => {
       staus: false,
       message: e.message,
     });
+  }
+});
+
+router.get("/send-sms", async (req, res) => {
+  const mobile = req.get("mobile");
+  const otpcode = req.get("otpcode");
+  try {
+    console.log("mobile and otp is : ", mobile, otpcode);
+
+    const apiKey = "oUsBzN0SIFCeAMVRmxGxMzA3d8GfIF%2BX8xgcgRk35nU%3D";
+    const clientId = "d1d94ba5-44cb-4f51-aa4b-7cf751d58490";
+    const apiUrl = `http://smsproadv.in/api/v2/SendSMS?SenderId=SANBAS&Is_Unicode=true&Message=1234&MobileNumbers=+919464115434&TemplateId=1007968231488654489&ApiKey=${apiKey}&ClientId=${clientId}`;
+
+    const response = await fetch(apiUrl);
+    const data = await response.text();
+
+    res.send(data);
+  } catch (error) {
+    console.error("Error in proxy request:", error);
+    res.status(500).send("Internal server error");
   }
 });
 
