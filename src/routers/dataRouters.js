@@ -34,6 +34,7 @@ const {
 } = require("../models/dataModel");
 
 const { send, listenerCount } = require("process");
+const { randomUUID } = require("crypto");
 
 // const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require("firebase/storage");
 // const storage2 = getStorage();
@@ -106,19 +107,18 @@ router.post(
           newList[k].management = req.body.management || newList[k].management;
           newList[k].items = req.body.items || newList[k].items;
           newList[k].services = req.body.services || newList[k].services;
-          newList[k].isActive =
-            req.body.isActive || newList[k].isActive;
-            const getData = await SocietyDataModel.findOne()
+          newList[k].isActive = req.body.isActive || newList[k].isActive;
+          const getData = await SocietyDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
-            const _id = getData._id;
-            const updateData = await SocietyDataModel.findOneAndUpdate(
-              { _id: _id }, // Replace '_id' with the correct identifier field for your document
-              { $set: { list: newList } },
-              { new: true }
-              );
-              
-              console.log(updateData);
+          const _id = getData._id;
+          const updateData = await SocietyDataModel.findOneAndUpdate(
+            { _id: _id }, // Replace '_id' with the correct identifier field for your document
+            { $set: { list: newList } },
+            { new: true }
+          );
+
+          console.log(updateData);
           var list = updateData.list;
           res.status(201).send({
             staus: true,
@@ -147,7 +147,7 @@ router.post(
           management,
           items,
           services,
-          isActive
+          isActive,
         };
         ls.push(obj);
 
@@ -833,7 +833,9 @@ router.post(
       // for uploading pics
       const storageRef = ref(
         storage2,
-        `Groobe-Events/Service-Data/${"Service" + " " + i * 10}`
+        `Groobe-Events/Service-Data/${
+          "Service" + " " + i * 10 + " " + randomUUID()
+        }`
       );
 
       const metadata = {
@@ -879,8 +881,7 @@ router.post(
           newList[k].isPopular = req.body.isPopular || newList[k].isPopular;
           newList[k].isRecommended =
             req.body.isRecommended || newList[k].isRecommended;
-          newList[k].isActive =
-            req.body.isActive || newList[k].isActive;
+          newList[k].isActive = req.body.isActive || newList[k].isActive;
           if (!req.file) newList[k].image = newList[k].image;
           else newList[k].image = downloadURL;
 
@@ -923,7 +924,7 @@ router.post(
           description,
           service_category,
           isPopular,
-          isActive
+          isActive,
         };
         ls.push(obj);
 
@@ -1136,7 +1137,9 @@ router.post(
       // for uploading pics
       const storageRef = ref(
         storage2,
-        `Groobe-Events/Service-Category-Data/${"Detail" + " " + i * 10}`
+        `Groobe-Events/Service-Category-Data/${
+          "Detail" + " " + i * 10 + " " + randomUUID()
+        }`
       );
 
       const metadata = {
@@ -1428,25 +1431,24 @@ router.post(
           newList[k].price = req.body.price || newList[k].price;
           newList[k].subCatagory =
             req.body.subCatagory || newList[k].subCatagory;
-            newList[k].isActive =
-            req.body.isActive || newList[k].isActive;
-            
-            const getData = await PricingDataModel.findOne()
+          newList[k].isActive = req.body.isActive || newList[k].isActive;
+
+          const getData = await PricingDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
-            const _id = getData._id;
-            const updateData = await PricingDataModel.findOneAndUpdate(
-              { _id: _id }, // Replace '_id' with the correct identifier field for your document
+          const _id = getData._id;
+          const updateData = await PricingDataModel.findOneAndUpdate(
+            { _id: _id }, // Replace '_id' with the correct identifier field for your document
             { $set: { list: newList } },
             { new: true }
-            );
-            var list = updateData.list;
-            res.status(201).send({
-              staus: true,
-              Data: list,
-            });
-          }
-        } else {
+          );
+          var list = updateData.list;
+          res.status(201).send({
+            staus: true,
+            Data: list,
+          });
+        }
+      } else {
         let id = generateUniqueId({
           length: 12,
         });
@@ -1463,7 +1465,7 @@ router.post(
           sid,
           price,
           subCatagory,
-          isActive
+          isActive,
         };
         ls.push(obj);
 
@@ -1659,9 +1661,8 @@ router.post(
           newList[k].experience = req.body.experience || newList[k].experience;
           newList[k].sid = req.body.sid || newList[k].sid;
           newList[k].price = req.body.price || newList[k].price;
-          newList[k].isActive =
-            req.body.isActive || newList[k].isActive;
-            const getData = await ArtistDataModel.findOne()
+          newList[k].isActive = req.body.isActive || newList[k].isActive;
+          const getData = await ArtistDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
           const _id = getData._id;
@@ -1687,7 +1688,7 @@ router.post(
         let address = req.body.address;
         let mobile = req.body.mobile;
         let experience = req.body.experience;
-            let isActive = req.body.isActive;
+        let isActive = req.body.isActive;
         obj = {
           id,
           oid,
@@ -1697,7 +1698,7 @@ router.post(
           address,
           mobile,
           experience,
-          isActive
+          isActive,
         };
         ls.push(obj);
 
@@ -1828,31 +1829,30 @@ router.post(
           newList[k].name = req.body.name || newList[k].name;
           newList[k].mobile = req.body.mobile || newList[k].mobile;
           newList[k].sid = req.body.sid || newList[k].sid;
-          newList[k].isActive =
-          req.body.isActive || newList[k].isActive;
+          newList[k].isActive = req.body.isActive || newList[k].isActive;
           const getData = await ManagementDataModel.findOne()
-          .select({ list: 1, _id: 1, __v: 1 })
+            .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
           const _id = getData._id;
           const updateData = await ManagementDataModel.findOneAndUpdate(
             { _id: _id }, // Replace '_id' with the correct identifier field for your document
             { $set: { list: newList } },
             { new: true }
-            );
-            var list = updateData.list;
-            res.status(201).send({
-              staus: true,
-              Data: list,
-            });
-          }
-        } else {
+          );
+          var list = updateData.list;
+          res.status(201).send({
+            staus: true,
+            Data: list,
+          });
+        }
+      } else {
         let id = generateUniqueId({
           length: 12,
         });
         let oid = 10 * i;
         let name = req.body.name;
         let sid = req.body.sid;
-        
+
         let mobile = req.body.mobile;
         let isActive = req.body.isActive;
 
@@ -1863,7 +1863,7 @@ router.post(
           sid,
 
           mobile,
-          isActive
+          isActive,
         };
         ls.push(obj);
 
