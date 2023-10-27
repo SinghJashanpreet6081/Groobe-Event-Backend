@@ -113,6 +113,12 @@ const BookedServiceDataModel = new mongoose.model(
 );
 const UserDataModel = new mongoose.model("User ", UserDataSchema);
 
+const EmployeeDataModel = new mongoose.model("Employee", {
+  email: String,
+  password: String,
+  userType: Number,
+});
+
 module.exports = {
   SocietyDataModel,
   SocietyArtistDataModel,
@@ -128,4 +134,5 @@ module.exports = {
   BookingDataModel,
   BookedServiceDataModel,
   UserDataModel,
+  EmployeeDataModel,
 };

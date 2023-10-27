@@ -2,6 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const generateUniqueId = require("generate-unique-id");
 const multer = require("multer");
+const jwt = require("jsonwebtoken");
 
 const {
   getStorage,
@@ -31,6 +32,7 @@ const {
   BookingDataModel,
   BookedServiceDataModel,
   UserDataModel,
+  EmployeeDataModel,
 } = require("../models/dataModel");
 
 const { send, listenerCount } = require("process");
@@ -68,6 +70,7 @@ router.post(
   middleware,
   upload1.single("image"),
   async (req, res) => {
+    const curDate = new Date().toLocaleString();
     try {
       const getData = await SocietyDataModel.find();
       // if already data
@@ -108,6 +111,7 @@ router.post(
           newList[k].items = req.body.items || newList[k].items;
           newList[k].services = req.body.services || newList[k].services;
           newList[k].isActive = req.body.isActive || newList[k].isActive;
+          newList[k].updated_at = curDate;
           const getData = await SocietyDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
             .sort({ list: 1 });
@@ -138,6 +142,8 @@ router.post(
         let items = req.body.items;
         let services = req.body.services;
         let isActive = req.body.isActive;
+        let created_at = curDate;
+        let updated_at = curDate;
         obj = {
           id,
           oid,
@@ -148,9 +154,10 @@ router.post(
           items,
           services,
           isActive,
+          created_at,
+          updated_at,
         };
         ls.push(obj);
-
         if (getData.length != 0) {
           const getData = await SocietyDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
@@ -1996,9 +2003,12 @@ router.post(
             message: `Data is not Available in Database For Id : ${id}`,
           });
         } else {
-          newList[k].date = req.body.date || newList[k].date;
+          //newList[k].date = req.body.date || newList[k].date;
           newList[k].time = req.body.time || newList[k].time;
           newList[k].sid = req.body.sid || newList[k].sid;
+          newList[k].quantity = req.body.quantity || newList[k].quantity;
+          newList[k].enabled = req.body.enabled || newList[k].enabled;
+          newList[k].bookings = req.body.bookings || newList[k].bookings;
 
           const getData = await SocietyTimeSlotDataModel.findOne()
             .select({ list: 1, _id: 1, __v: 1 })
@@ -2020,17 +2030,24 @@ router.post(
           length: 12,
         });
         let oid = 10 * i;
-        let date = req.body.date;
+        //let date = req.body.date;
         let sid = req.body.sid;
 
         let time = req.body.time;
+        let quantity = req.body.quantity;
+
+        let enabled = req.body.enabled;
+        let bookings = req.body.bookings;
 
         obj = {
           id,
           oid,
-          date,
+          //date,
           sid,
           time,
+          quantity,
+          enabled,
+          bookings,
         };
         ls.push(obj);
 
@@ -2090,9 +2107,18 @@ router.get(
           .select({ list: 1, _id: 0, __v: 1 })
           .sort({ list: 1 });
 
+        const curD = new Date().toLocaleDateString();
+        const [month, day, year] = curD.split("/");
+
+        // Create a new Date object in the desired format (YYYY-MM-DD)
+        const formattedDate = `${year}-${month}-${day}`;
+        // console.log(formattedDate);
+
         //for sorting:
-        var TempList = getData.list;
-        console.log("This is Artist data--------");
+        var TempList = getData.list.filter((a) => {
+          return a.enabled == 1 && a.bookings < a.quantity && (a.time.split(" ")[0] >= formattedDate)
+        });
+        //console.log("This is Artist data--------");
         console.log(TempList);
 
         res.status(200).send({
@@ -2389,10 +2415,16 @@ router.post(
           newList[k].location = req.body.location || newList[k].location;
           newList[k].name = req.body.name || newList[k].name;
           newList[k].mobile = req.body.mobile || newList[k].mobile;
-          newList[k].bookedServices =
-            req.body.bookedServices || newList[k].bookedServices;
+          // newList[k].bookedServices =
+          //   req.body.bookedServices || newList[k].bookedServices;
           newList[k].paymentStatus =
             req.body.paymentStatus || newList[k].paymentStatus;
+          newList[k].categoryId = req.body.categoryId || newList[k].categoryId;
+          newList[k].amount = req.body.amount || newList[k].amount;
+          newList[k].transaction_id =
+            req.body.transaction_id || newList[k].transaction_id;
+          newList[k].booking_status =
+            req.body.booking_status || newList[k].booking_status;
           newList[k].paymentMode =
             req.body.paymentMode || newList[k].paymentMode;
 
@@ -2423,9 +2455,12 @@ router.post(
         let location = req.body.location;
         let name = req.body.name;
         let mobile = req.body.mobile;
-        let bookedServices = req.body.bookedServices;
+        let categoryId = req.body.categoryId;
+        let transaction_id = req.body.transaction_id;
+        let amount = req.body.amount;
         let paymentStatus = req.body.paymentStatus;
         let paymentMode = req.body.paymentMode;
+        let booking_status = req.body.booking_status;
 
         obj = {
           id,
@@ -2437,9 +2472,12 @@ router.post(
           location,
           name,
           mobile,
-          bookedServices,
           paymentMode,
           paymentStatus,
+          categoryId,
+          transaction_id,
+          amount,
+          booking_status,
         };
         ls.push(obj);
 
@@ -2497,7 +2535,125 @@ router.get("/booking", middleware, upload.single("image"), async (req, res) => {
     //for sorting:
     var TempList = getData.list;
     if (!id) {
-      console.log("This is Artist data--------");
+      console.log("This is Booking data--------");
+      console.log(TempList);
+
+      res.status(200).send({
+        status: "success",
+        data: TempList,
+      });
+    } else {
+      const SignleIdData = TempList.filter((arr) => {
+        return arr.id === id;
+      });
+
+      if (SignleIdData.length === 0) {
+        res.status(500).send({
+          status: false,
+          message: `Data is not Available in Database For Id : ${id}`,
+        });
+      } else
+        res.status(200).json({
+          status: "success",
+          data: SignleIdData,
+        });
+    }
+  } catch (e) {
+    res.status(500).send({
+      staus: false,
+      message: e.message,
+    });
+  }
+});
+router.get("/booking-cancelled", middleware, upload.single("image"), async (req, res) => {
+  try {
+    const id = req.body.id || req.query.id;
+    const getData = await BookingDataModel.findOne()
+      .select({ list: 1, _id: 0, __v: 1 })
+      .sort({ list: 1 });
+
+    //for sorting:
+    var TempList = getData.list.filter((a)=>{return a.booking_status == "Cancelled"});
+    if (!id) {
+      //console.log("This is Artist data--------");
+      console.log(TempList);
+
+      res.status(200).send({
+        status: "success",
+        data: TempList,
+      });
+    } else {
+      const SignleIdData = TempList.filter((arr) => {
+        return arr.id === id;
+      });
+
+      if (SignleIdData.length === 0) {
+        res.status(500).send({
+          status: false,
+          message: `Data is not Available in Database For Id : ${id}`,
+        });
+      } else
+        res.status(200).json({
+          status: "success",
+          data: SignleIdData,
+        });
+    }
+  } catch (e) {
+    res.status(500).send({
+      staus: false,
+      message: e.message,
+    });
+  }
+});
+router.get("/booking-pending", middleware, upload.single("image"), async (req, res) => {
+  try {
+    const id = req.body.id || req.query.id;
+    const getData = await BookingDataModel.findOne()
+      .select({ list: 1, _id: 0, __v: 1 })
+      .sort({ list: 1 });
+
+    //for sorting:
+    var TempList = getData.list.filter((a)=>{return a.booking_status == "Pending"});
+    if (!id) {
+      console.log(TempList);
+
+      res.status(200).send({
+        status: "success",
+        data: TempList,
+      });
+    } else {
+      const SignleIdData = TempList.filter((arr) => {
+        return arr.id === id;
+      });
+
+      if (SignleIdData.length === 0) {
+        res.status(500).send({
+          status: false,
+          message: `Data is not Available in Database For Id : ${id}`,
+        });
+      } else
+        res.status(200).json({
+          status: "success",
+          data: SignleIdData,
+        });
+    }
+  } catch (e) {
+    res.status(500).send({
+      staus: false,
+      message: e.message,
+    });
+  }
+});
+router.get("/booking-started", middleware, upload.single("image"), async (req, res) => {
+  try {
+    const id = req.body.id || req.query.id;
+    const getData = await BookingDataModel.findOne()
+      .select({ list: 1, _id: 0, __v: 1 })
+      .sort({ list: 1 });
+
+    //for sorting:
+    var TempList = getData.list.filter((a)=>{return a.booking_status == "Started"});
+    if (!id) {
       console.log(TempList);
 
       res.status(200).send({
@@ -2840,6 +2996,24 @@ router.get("/send-sms", async (req, res) => {
   } catch (error) {
     console.error("Error in proxy request:", error);
     res.status(500).send("Internal server error");
+  }
+});
+
+const secretKey = "groobe";
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  // Check if a user with the provided email and password exists
+  const user = await EmployeeDataModel.findOne({ email, password });
+  if (user) {
+    // Generate a JWT token
+    const token = jwt.sign({ email, userType: user.userType }, secretKey, {
+      expiresIn: "1h", // Token expiration time (adjust as needed)
+    });
+
+    res.json({ success: true, userType: user.userType, token });
+  } else {
+    res.json({ success: false });
   }
 });
 
