@@ -2116,7 +2116,11 @@ router.get(
 
         //for sorting:
         var TempList = getData.list.filter((a) => {
-          return a.enabled == 1 && a.bookings < a.quantity && (a.time.split(" ")[0] >= formattedDate)
+          return (
+            a.enabled == 1 &&
+            a.bookings < a.quantity &&
+            a.time.split(" ")[0] >= formattedDate
+          );
         });
         //console.log("This is Artist data--------");
         console.log(TempList);
@@ -2565,124 +2569,148 @@ router.get("/booking", middleware, upload.single("image"), async (req, res) => {
     });
   }
 });
-router.get("/booking-cancelled", middleware, upload.single("image"), async (req, res) => {
-  try {
-    const id = req.body.id || req.query.id;
-    const getData = await BookingDataModel.findOne()
-      .select({ list: 1, _id: 0, __v: 1 })
-      .sort({ list: 1 });
 
-    //for sorting:
-    var TempList = getData.list.filter((a)=>{return a.booking_status == "Cancelled"});
-    if (!id) {
-      //console.log("This is Artist data--------");
-      console.log(TempList);
+router.get(
+  "/booking-cancelled",
+  middleware,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const id = req.body.id || req.query.id;
+      const getData = await BookingDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
 
-      res.status(200).send({
-        status: "success",
-        data: TempList,
+      //for sorting:
+      var TempList = getData.list.filter((a) => {
+        return a.booking_status == "Cancelled";
       });
-    } else {
-      const SignleIdData = TempList.filter((arr) => {
-        return arr.id === id;
-      });
+      if (!id) {
+        //console.log("This is Artist data--------");
+        console.log(TempList);
 
-      if (SignleIdData.length === 0) {
-        res.status(500).send({
-          status: false,
-          message: `Data is not Available in Database For Id : ${id}`,
-        });
-      } else
-        res.status(200).json({
+        res.status(200).send({
           status: "success",
-          data: SignleIdData,
+          data: TempList,
         });
+      } else {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
+          res.status(500).send({
+            status: false,
+            message: `Data is not Available in Database For Id : ${id}`,
+          });
+        } else
+          res.status(200).json({
+            status: "success",
+            data: SignleIdData,
+          });
+      }
+    } catch (e) {
+      res.status(500).send({
+        staus: false,
+        message: e.message,
+      });
     }
-  } catch (e) {
-    res.status(500).send({
-      staus: false,
-      message: e.message,
-    });
   }
-});
-router.get("/booking-pending", middleware, upload.single("image"), async (req, res) => {
-  try {
-    const id = req.body.id || req.query.id;
-    const getData = await BookingDataModel.findOne()
-      .select({ list: 1, _id: 0, __v: 1 })
-      .sort({ list: 1 });
+);
 
-    //for sorting:
-    var TempList = getData.list.filter((a)=>{return a.booking_status == "Pending"});
-    if (!id) {
-      console.log(TempList);
+router.get(
+  "/booking-pending",
+  middleware,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const id = req.body.id || req.query.id;
+      const getData = await BookingDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
 
-      res.status(200).send({
-        status: "success",
-        data: TempList,
+      //for sorting:
+      var TempList = getData.list.filter((a) => {
+        return a.booking_status == "Pending";
       });
-    } else {
-      const SignleIdData = TempList.filter((arr) => {
-        return arr.id === id;
-      });
+      if (!id) {
+        console.log(TempList);
 
-      if (SignleIdData.length === 0) {
-        res.status(500).send({
-          status: false,
-          message: `Data is not Available in Database For Id : ${id}`,
-        });
-      } else
-        res.status(200).json({
+        res.status(200).send({
           status: "success",
-          data: SignleIdData,
+          data: TempList,
         });
+      } else {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
+          res.status(500).send({
+            status: false,
+            message: `Data is not Available in Database For Id : ${id}`,
+          });
+        } else
+          res.status(200).json({
+            status: "success",
+            data: SignleIdData,
+          });
+      }
+    } catch (e) {
+      res.status(500).send({
+        staus: false,
+        message: e.message,
+      });
     }
-  } catch (e) {
-    res.status(500).send({
-      staus: false,
-      message: e.message,
-    });
   }
-});
-router.get("/booking-started", middleware, upload.single("image"), async (req, res) => {
-  try {
-    const id = req.body.id || req.query.id;
-    const getData = await BookingDataModel.findOne()
-      .select({ list: 1, _id: 0, __v: 1 })
-      .sort({ list: 1 });
+);
 
-    //for sorting:
-    var TempList = getData.list.filter((a)=>{return a.booking_status == "Started"});
-    if (!id) {
-      console.log(TempList);
+router.get(
+  "/booking-started",
+  middleware,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const id = req.body.id || req.query.id;
+      const getData = await BookingDataModel.findOne()
+        .select({ list: 1, _id: 0, __v: 1 })
+        .sort({ list: 1 });
 
-      res.status(200).send({
-        status: "success",
-        data: TempList,
+      //for sorting:
+      var TempList = getData.list.filter((a) => {
+        return a.booking_status == "Started";
       });
-    } else {
-      const SignleIdData = TempList.filter((arr) => {
-        return arr.id === id;
-      });
+      if (!id) {
+        console.log(TempList);
 
-      if (SignleIdData.length === 0) {
-        res.status(500).send({
-          status: false,
-          message: `Data is not Available in Database For Id : ${id}`,
-        });
-      } else
-        res.status(200).json({
+        res.status(200).send({
           status: "success",
-          data: SignleIdData,
+          data: TempList,
         });
+      } else {
+        const SignleIdData = TempList.filter((arr) => {
+          return arr.id === id;
+        });
+
+        if (SignleIdData.length === 0) {
+          res.status(500).send({
+            status: false,
+            message: `Data is not Available in Database For Id : ${id}`,
+          });
+        } else
+          res.status(200).json({
+            status: "success",
+            data: SignleIdData,
+          });
+      }
+    } catch (e) {
+      res.status(500).send({
+        staus: false,
+        message: e.message,
+      });
     }
-  } catch (e) {
-    res.status(500).send({
-      staus: false,
-      message: e.message,
-    });
   }
-});
+);
 
 // booked ser. Data
 router.post(
@@ -2999,8 +3027,29 @@ router.get("/send-sms", async (req, res) => {
   }
 });
 
+router.post(
+  "/login-admin",
+  middleware,
+  upload1.single("image"),
+  async (req, res) => {
+    try {
+      const { email, password, userType } = req.body;
+
+      // Create a new user instance
+      const user = new EmployeeDataModel({ email, password, userType });
+      console.log(req.body);
+      // Save the user to the database
+      await user.save();
+
+      res.status(201).json(user);
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
+
 const secretKey = "groobe";
-router.post("/login", async (req, res) => {
+router.get("/login", middleware, upload1.single("image"), async (req, res) => {
   const { email, password } = req.body;
 
   // Check if a user with the provided email and password exists
