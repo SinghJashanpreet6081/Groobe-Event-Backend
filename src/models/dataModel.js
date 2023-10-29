@@ -3,6 +3,10 @@ const validator = require("validator");
 const { uuidv4 } = require("uuid");
 //const uniqueValidator = require('mongoose-unique-validator');
 
+//backend url 
+//https://event-backend-484f.onrender.com
+
+
 //List output
 const SocietyDataSchema = mongoose.Schema({
   list: [Object],
