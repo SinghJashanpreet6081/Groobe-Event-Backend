@@ -1069,6 +1069,7 @@ router.get(
               bgcolor: arr.bgcolor,
               textcolor: arr.textcolor,
               description: arr.description,
+              sid: arr.sid
             };
             return obj;
           });
@@ -1099,6 +1100,7 @@ router.get(
                 bgcolor: arr.bgcolor,
                 textcolor: arr.textcolor,
                 description: arr.description,
+                sid:arr.sid
               };
               return obj;
             });
