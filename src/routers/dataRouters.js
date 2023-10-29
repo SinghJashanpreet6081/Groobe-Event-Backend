@@ -879,6 +879,7 @@ router.post(
           });
         } else {
           newList[k].name = req.body.name || newList[k].name;
+          newList[k].sid = req.body.sid || newList[k].sid;
           newList[k].bgcolor = req.body.bgcolor || newList[k].bgcolor;
           newList[k].textcolor = req.body.textcolor || newList[k].textcolor;
           newList[k].description =
@@ -913,6 +914,7 @@ router.post(
         });
         let oid = 10 * i;
         let name = req.body.name;
+        let sid = req.body.sid;
         let image = downloadURL;
         let bgcolor = req.body.bgcolor;
         let textcolor = req.body.textcolor;
@@ -923,6 +925,7 @@ router.post(
 
         obj = {
           id,
+          sid,
           oid,
           name,
           image,
@@ -2131,6 +2134,87 @@ router.get(
         });
       } else {
         const getData = await SocietyTimeSlotDataModel.findById(id);
+        if (!getData) {
+          res.status(500).send({
+            status: false,
+            message: `Data is not Available in Database For Id : ${id}`,
+          });
+        } else
+          res.status(200).json({
+            status: "success",
+            data: getData,
+          });
+      }
+    } catch (e) {
+      res.status(500).send({
+        staus: false,
+        message: e.message,
+      });
+    }
+  }
+);
+
+// //THis is get for management data
+router.get(
+  "/societywise-time-slot",
+  middleware,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const sid = req.body.sid || req.query.sid;
+      if (!sid) {
+        const getData = await SocietyTimeSlotDataModel.findOne()
+          .select({ list: 1, _id: 0, __v: 1 })
+          .sort({ list: 1 });
+
+        const curD = new Date().toLocaleDateString();
+        const [month, day, year] = curD.split("/");
+
+        // Create a new Date object in the desired format (YYYY-MM-DD)
+        const formattedDate = `${year}-${month}-${day}`;
+        // console.log(formattedDate);
+
+        //for sorting:
+        var TempList = getData.list.filter((a) => {
+          return (
+            a.enabled == 1 &&
+            a.bookings < a.quantity &&
+            a.time.split(" ")[0] >= formattedDate
+          );
+        });
+        //console.log("This is Artist data--------");
+        console.log(TempList);
+
+        res.status(200).send({
+          status: "success",
+          data: TempList,
+        });
+      } else {
+        const getData = await SocietyTimeSlotDataModel.find({ "list.sid": sid });
+        getData.forEach(doc => {
+          doc.list.forEach(item => {
+            console.log(item);
+          });
+        });
+        
+        const curD = new Date().toLocaleDateString();
+        const [month, day, year] = curD.split("/");
+
+        // Create a new Date object in the desired format (YYYY-MM-DD)
+        const formattedDate = `${year}-${month}-${day}`;
+        // console.log(formattedDate);
+
+        //for sorting:
+        var TempList = getData.filter((a) => {
+          return (
+            a.enabled == 1 &&
+            a.bookings < a.quantity &&
+            a.time.split(" ")[0] >= formattedDate
+          );
+        });
+        //console.log("This is Artist data--------");
+        //console.log(TempList);
+
         if (!getData) {
           res.status(500).send({
             status: false,
