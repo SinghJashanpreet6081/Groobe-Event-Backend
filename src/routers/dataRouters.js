@@ -1055,8 +1055,13 @@ router.get(
           .select({ list: 1, _id: 0, __v: 1 })
           .sort({ list: 1 });
 
+
         //for sorting:
-        var TempList = getData.list;
+        var TempList = getData.list.filter((a) => {
+          return a.isActive == 1;
+        });
+        console.log(TempList);
+
 
         if (!id) {
           console.log("This is Service data--------");
@@ -1069,7 +1074,7 @@ router.get(
               bgcolor: arr.bgcolor,
               textcolor: arr.textcolor,
               description: arr.description,
-              sid: arr.sid
+              sid: arr.sid,
             };
             return obj;
           });
@@ -1100,7 +1105,7 @@ router.get(
                 bgcolor: arr.bgcolor,
                 textcolor: arr.textcolor,
                 description: arr.description,
-                sid:arr.sid
+                sid: arr.sid,
               };
               return obj;
             });
@@ -1581,7 +1586,8 @@ router.get("/pricing", middleware, upload.single("image"), async (req, res) => {
             name: arr.name,
             price: arr.price,
             subCatagory: arr.subCatagorys,
-            sid: arr.sid
+            sid: arr.sid,
+            Sprice: arr.Sprice,
           };
           return obj;
         });
@@ -1610,7 +1616,8 @@ router.get("/pricing", middleware, upload.single("image"), async (req, res) => {
               name: arr.name,
               price: arr.price,
               subCatagory: arr.subCatagorys,
-              sid:arr.sid
+              sid: arr.sid,
+              Sprice: arr.Sprice,
             };
             return obj;
           });
@@ -2197,13 +2204,15 @@ router.get(
           data: TempList,
         });
       } else {
-        const getData = await SocietyTimeSlotDataModel.find({ "list.sid": sid });
-        getData.forEach(doc => {
-          doc.list.forEach(item => {
+        const getData = await SocietyTimeSlotDataModel.find({
+          "list.sid": sid,
+        });
+        getData.forEach((doc) => {
+          doc.list.forEach((item) => {
             console.log(item);
           });
         });
-        
+
         const curD = new Date().toLocaleDateString();
         const [month, day, year] = curD.split("/");
 
