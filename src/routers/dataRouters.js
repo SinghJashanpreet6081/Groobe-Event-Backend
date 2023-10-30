@@ -1581,6 +1581,7 @@ router.get("/pricing", middleware, upload.single("image"), async (req, res) => {
             name: arr.name,
             price: arr.price,
             subCatagory: arr.subCatagorys,
+            sid: arr.sid
           };
           return obj;
         });
@@ -1609,6 +1610,7 @@ router.get("/pricing", middleware, upload.single("image"), async (req, res) => {
               name: arr.name,
               price: arr.price,
               subCatagory: arr.subCatagorys,
+              sid:arr.sid
             };
             return obj;
           });
