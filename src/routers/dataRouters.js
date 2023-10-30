@@ -3,13 +3,20 @@ const router = new express.Router();
 const generateUniqueId = require("generate-unique-id");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
-
+const cors = require('cors')
 const {
   getStorage,
   ref,
   getDownloadURL,
   uploadBytesResumable,
 } = require("firebase/storage");
+
+router.use(
+  cors({
+    origin: "https://events.groobe.in/",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  })
+);
 
 const storage1 = require("../firebase");
 const storage2 = getStorage();
