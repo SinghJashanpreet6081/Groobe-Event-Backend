@@ -11,12 +11,12 @@ const {
   uploadBytesResumable,
 } = require("firebase/storage");
 
-router.use(
-  cors({
-    origin: "https://events.groobe.in/",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  })
-);
+// router.use(
+//   cors({
+//     origin: "https://events.groobe.in/",
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//   })
+// );
 
 const storage1 = require("../firebase");
 const storage2 = getStorage();
