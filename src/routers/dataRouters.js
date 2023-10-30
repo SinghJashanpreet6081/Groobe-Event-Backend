@@ -1441,6 +1441,7 @@ router.post(
           newList[k].name = req.body.name || newList[k].name;
           newList[k].sid = req.body.sid || newList[k].sid;
           newList[k].price = req.body.price || newList[k].price;
+          newList[k].Sprice = req.body.Sprice || newList[k].Sprice;
           newList[k].subCatagory =
             req.body.subCatagory || newList[k].subCatagory;
           newList[k].isActive = req.body.isActive || newList[k].isActive;
@@ -1468,6 +1469,7 @@ router.post(
         let name = req.body.name;
         let sid = req.body.sid;
         let price = req.body.price;
+        let Sprice = req.body.Sprice;
         let subCatagory = req.body.subCatagory;
         let isActive = req.body.isActive;
         obj = {
@@ -1476,6 +1478,7 @@ router.post(
           name,
           sid,
           price,
+          Sprice,
           subCatagory,
           isActive,
         };
